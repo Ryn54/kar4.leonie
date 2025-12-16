@@ -9,6 +9,14 @@ class User
         $this->db = (new Database())->getConnection();
     }
 
+    public function getAll()
+    {
+        $sql = "SELECT * FROM user";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function login($username, $password)
     {
         $sql = "SELECT * FROM user WHERE username = :username";
@@ -71,6 +79,33 @@ class User
             return true; // Nothing to update
 
         $sql .= implode(", ", $updates);
+        $sql .= " WHERE idUser = :id";
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute($params);
+    }
+
+    public function delete($id)
+    {
+        $sql = "DELETE FROM user WHERE idUser = :id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id', $id);
+        return $stmt->execute();
+    }
+
+    public function updateByAdmin($id, $username, $role, $password = null)
+    {
+        $sql = "UPDATE user SET username = :username, userRole = :role";
+        $params = [':username' => $username, ':role' => $role, ':id' => $id];
+
+        if ($password) {
+            $sql .= ", password = :password";
+            // Check if password_needs_rehash might be better, but typically admin sets a new one
+            // We assume $password is the plain text new password. 
+            // If admin leaves it blank, controller should pass null.
+            $params[':password'] = password_hash($password, PASSWORD_DEFAULT);
+        }
+
         $sql .= " WHERE idUser = :id";
 
         $stmt = $this->db->prepare($sql);

@@ -10,6 +10,9 @@
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="worlds-tab" data-bs-toggle="tab" data-bs-target="#worlds" type="button" role="tab">Mondes</button>
         </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab">Utilisateurs</button>
+        </li>
     </ul>
 
     <div class="tab-content" id="adminTabContent">
@@ -80,6 +83,40 @@
                     <?php endforeach; ?>
                     <?php if(empty($worlds)): ?>
                         <tr><td colspan="5" class="text-center">Aucun monde trouvé</td></tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Users Section -->
+        <div class="tab-pane fade" id="users" role="tabpanel">
+            <div class="d-flex justify-content-between mb-3">
+                <h4>Liste des Utilisateurs</h4>
+            </div>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom d'utilisateur</th>
+                        <th>Rôle</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if(!empty($users)): ?>
+                        <?php foreach($users as $user): ?>
+                        <tr>
+                            <td><?= $user['idUser'] ?></td>
+                            <td><?= htmlspecialchars($user['username']) ?></td>
+                            <td><?= $user['userRole'] ?></td>
+                            <td>
+                                <a href="index.php?page=admin&action=editUser&id=<?= $user['idUser'] ?>" class="btn btn-sm btn-warning">Modifier</a>
+                                <a href="index.php?page=admin&action=deleteUser&id=<?= $user['idUser'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">Supprimer</a>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr><td colspan="4" class="text-center">Aucun utilisateur trouvé</td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>

@@ -1,6 +1,7 @@
 <?php
 require_once 'models/Avatar.php';
 require_once 'models/World.php';
+require_once 'models/User.php';
 
 class AdminController
 {
@@ -16,9 +17,11 @@ class AdminController
     {
         $avatarModel = new Avatar();
         $worldModel = new World();
+        $userModel = new User();
 
         $avatars = $avatarModel->getAll();
         $worlds = $worldModel->getAll();
+        $users = $userModel->getAll();
 
         require_once 'views/admin/dashboard.php';
     }
@@ -217,6 +220,57 @@ class AdminController
             $worldModel = new World();
             $worldModel->update($id, $name, $imagePath, $url);
             header('Location: index.php?page=admin&action=dashboard');
+        }
+    }
+
+    // --- USER ACTIONS ---
+    public function editUser()
+    {
+        if (isset($_GET['id'])) {
+            $userModel = new User();
+            $user = $userModel->getById($_GET['id']);
+            require_once 'views/admin/edit_user.php';
+        }
+    }
+
+    public function updateUser()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $id = $_POST['id'];
+            $username = $_POST['username'];
+            $role = $_POST['role'];
+            $password = !empty($_POST['password']) ? $_POST['password'] : null;
+
+            $userModel = new User();
+            // Prevent deleting/demoting the main admin
+            if ($id == 1 && $role != 'admin') {
+                $role = 'admin';
+            }
+
+            if ($userModel->updateByAdmin($id, $username, $role, $password)) {
+                header('Location: index.php?page=admin&action=dashboard&msg=user_updated');
+            } else {
+                header('Location: index.php?page=admin&action=editUser&id=' . $id . '&error=update_failed');
+            }
+        }
+    }
+
+    public function deleteUser()
+    {
+        $id = $_POST['id'] ?? $_GET['id'] ?? null;
+
+        if ($id) {
+            if ($id == $_SESSION['user_id'] || $id == 1) {
+                header('Location: index.php?page=admin&action=dashboard&error=cannot_delete_self');
+                exit();
+            }
+
+            $userModel = new User();
+            if ($userModel->delete($id)) {
+                header('Location: index.php?page=admin&action=dashboard&msg=user_deleted');
+            } else {
+                header('Location: index.php?page=admin&action=dashboard&error=delete_failed');
+            }
         }
     }
 }

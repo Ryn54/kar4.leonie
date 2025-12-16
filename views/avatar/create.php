@@ -46,15 +46,15 @@
 
                         <div id="avatar-display" class="text-center flex-grow-1">
                             <?php if (!empty($avatars)): ?>
-                                <model-viewer id="avatar-viewer" 
-                                    src="" 
-                                    poster="" 
-                                    alt="Avatar" 
-                                    shadow-intensity="1" 
-                                    camera-controls 
-                                    auto-rotate
-                                    style="width: 100%; height: 300px; background-color: transparent;">
+                                <model-viewer id="avatar-viewer" src="" poster="" alt="Avatar" shadow-intensity="1"
+                                    camera-controls style="width: 100%; height: 300px; background-color: transparent;">
                                 </model-viewer>
+
+                                <div id="animation-controls" class="mt-2" style="display:none;">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" id="random-anim-btn">
+                                        Animation Aléatoire 🎲
+                                    </button>
+                                </div>
 
                                 <h4 id="current-avatar-name" class="mt-3 fw-bold text-primary"></h4>
                                 <input type="hidden" id="selected-avatar-id" name="avatar_id" value="">
@@ -130,19 +130,19 @@
     function render() {
         // --- Avatar Logic ---
         if (avatars && avatars.length > 0) {
-             const av = avatars[currentAvatarIndex];
-             const viewer = document.getElementById('avatar-viewer');
-             const nameEl = document.getElementById('current-avatar-name');
-             const idInput = document.getElementById('selected-avatar-id');
+            const av = avatars[currentAvatarIndex];
+            const viewer = document.getElementById('avatar-viewer');
+            const nameEl = document.getElementById('current-avatar-name');
+            const idInput = document.getElementById('selected-avatar-id');
 
-             // Update Model Viewer
-             viewer.src = av.modelAvatar || ''; // Set model path or empty
-             viewer.poster = av.imgAvatar;      // Set image as poster
-             viewer.alt = av.nameAvatar;
+            // Update Model Viewer
+            viewer.src = av.modelAvatar || ''; // Set model path or empty
+            viewer.poster = av.imgAvatar;      // Set image as poster
+            viewer.alt = av.nameAvatar;
 
-             if (nameEl) nameEl.innerText = av.nameAvatar;
-             if (idInput) idInput.value = av.idAvatar;
-         }
+            if (nameEl) nameEl.innerText = av.nameAvatar;
+            if (idInput) idInput.value = av.idAvatar;
+        }
 
         // --- World Logic ---
         if (worlds && worlds.length > 0) {
@@ -202,6 +202,41 @@
 
         this.submit();
     });
+
+    // Model Viewer Animation Logic
+    const viewer = document.getElementById('avatar-viewer');
+    const animControls = document.getElementById('animation-controls');
+    const randomAnimBtn = document.getElementById('random-anim-btn');
+
+    if (viewer) {
+        viewer.addEventListener('load', () => {
+            const anims = viewer.availableAnimations;
+
+            if (anims && anims.length > 0) {
+                // Show controls
+                if (animControls) animControls.style.display = 'block';
+
+                // Stop default animation
+                viewer.animationName = null;
+
+                // Handle Random Button
+                if (randomAnimBtn) {
+                    randomAnimBtn.onclick = () => {
+                        const randomAnim = anims[Math.floor(Math.random() * anims.length)];
+                        viewer.animationName = randomAnim;
+                        viewer.play();
+                        console.log('Random animation:', randomAnim);
+                    };
+                }
+
+                console.log('Animations loaded:', anims);
+            } else {
+                // No animations found
+                if (animControls) animControls.style.display = 'none';
+                viewer.animationName = null;
+            }
+        });
+    }
 
     // Initial render
     render();
