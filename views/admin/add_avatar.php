@@ -14,8 +14,10 @@
                     <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
                 </div>
                 <div class="mb-3">
-                    <label for="model" class="form-label">Modèle (Nom/Référence)</label>
-                    <input type="text" class="form-control" id="model" name="model" placeholder="Ex: robot_v1">
+                    <label for="model" class="form-label">Modèle 3D (.glb) (Optionnel)</label>
+                    <input type="file" class="form-control" id="model" name="model" accept=".glb">
+                    <div class="form-text">Chargez un fichier .glb depuis votre ordinateur (ex: source/modele_avatar)
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-success">Ajouter</button>
                 <a href="index.php?page=admin&action=dashboard" class="btn btn-secondary">Annuler</a>

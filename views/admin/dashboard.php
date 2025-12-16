@@ -37,7 +37,7 @@
                         <td><?= $avatar['imgAvatar'] ?></td>
                         <td><?= $avatar['modelAvatar'] ?? '-' ?></td>
                         <td>
-                            <button class="btn btn-sm btn-warning">Modifier</button>
+                            <a href="index.php?page=admin&action=editAvatar&id=<?= $avatar['idAvatar'] ?>" class="btn btn-sm btn-warning">Modifier</a>
                             <button class="btn btn-sm btn-danger">Supprimer</button>
                         </td>
                     </tr>
@@ -73,7 +73,7 @@
                         <td><?= $world['imgWorld'] ?></td>
                         <td><?= $world['urlWorld'] ?? '-' ?></td>
                         <td>
-                            <button class="btn btn-sm btn-warning">Modifier</button>
+                            <a href="index.php?page=admin&action=editWorld&id=<?= $world['idWorld'] ?>" class="btn btn-sm btn-warning">Modifier</a>
                             <button class="btn btn-sm btn-danger">Supprimer</button>
                         </td>
                     </tr>

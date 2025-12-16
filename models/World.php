@@ -17,6 +17,15 @@ class World
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getById($id)
+    {
+        $sql = "SELECT * FROM world WHERE idWorld = :id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function add($name, $image, $url)
     {
         $sql = "INSERT INTO world (nameWorld, imgWorld, urlWorld) VALUES (:name, :image, :url)";
@@ -25,5 +34,21 @@ class World
         $stmt->bindParam(':image', $image);
         $stmt->bindParam(':url', $url);
         return $stmt->execute();
+    }
+
+    public function update($id, $name, $image, $url)
+    {
+        $sql = "UPDATE world SET nameWorld = :name, urlWorld = :url";
+        $params = [':name' => $name, ':url' => $url, ':id' => $id];
+
+        if ($image) {
+            $sql .= ", imgWorld = :image";
+            $params[':image'] = $image;
+        }
+
+        $sql .= " WHERE idWorld = :id";
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute($params);
     }
 }

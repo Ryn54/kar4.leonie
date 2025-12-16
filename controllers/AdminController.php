@@ -23,7 +23,12 @@ class AdminController
         require_once 'views/admin/dashboard.php';
     }
 
-    // Avatar actions
+    public function index()
+    {
+        $this->dashboard();
+    }
+
+    // --- AVATAR ACTIONS ---
     public function addAvatar()
     {
         require_once 'views/admin/add_avatar.php';
@@ -33,41 +38,114 @@ class AdminController
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $name = $_POST['name'];
-            $model = $_POST['model'];
 
             // Handle Image Upload
             $imagePath = '';
             if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-                // Ensure target directory exists
-                if (!is_dir('public/assets/avatars')) {
-                    if (!is_dir('public/assets'))
-                        mkdir('public/assets');
-                    mkdir('public/assets/avatars');
+                // Ensure target directory exists (Checking both public/assets and local assets for flexibility)
+                $targetDir = 'public/assets/avatars/';
+                if (!is_dir($targetDir)) {
+                    if (is_dir('assets'))
+                        $targetDir = 'assets/avatars/';
+                    else
+                        mkdir($targetDir, 0777, true);
                 }
 
                 $fileName = basename($_FILES['image']['name']);
-                $targetFilePath = 'public/assets/avatars/' . $fileName;
-
-                // If using root structure without public as document root, adjust
-                if (!is_dir('public')) {
-                    // Fallback to assets at root
-                    if (!is_dir('assets/avatars'))
-                        mkdir('assets/avatars', 0777, true);
-                    $targetFilePath = 'assets/avatars/' . $fileName;
-                }
-
+                $targetFilePath = $targetDir . $fileName;
                 if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFilePath)) {
                     $imagePath = $targetFilePath;
                 }
             }
 
+            // Handle Model Upload (.glb)
+            $modelPath = '';
+            if (isset($_FILES['model']) && $_FILES['model']['error'] == 0) {
+                $targetDir = 'public/assets/models/';
+                if (!is_dir($targetDir)) {
+                    if (is_dir('assets'))
+                        $targetDir = 'assets/models/';
+                    else
+                        mkdir($targetDir, 0777, true);
+                }
+
+                $fileName = basename($_FILES['model']['name']);
+                $ext = pathinfo($fileName, PATHINFO_EXTENSION);
+                if (strtolower($ext) == 'glb') {
+                    $targetFilePath = $targetDir . $fileName;
+                    if (move_uploaded_file($_FILES['model']['tmp_name'], $targetFilePath)) {
+                        $modelPath = $targetFilePath;
+                    }
+                }
+            }
+
             $avatarModel = new Avatar();
-            $avatarModel->add($name, $imagePath, $model);
+            $avatarModel->add($name, $imagePath, $modelPath);
             header('Location: index.php?page=admin&action=dashboard');
         }
     }
 
-    // World actions
+    public function editAvatar()
+    {
+        if (isset($_GET['id'])) {
+            $avatarModel = new Avatar();
+            $avatar = $avatarModel->getById($_GET['id']);
+            require_once 'views/admin/edit_avatar.php';
+        }
+    }
+
+    public function updateAvatar()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $id = $_POST['id'];
+            $name = $_POST['name'];
+
+            // Handle Image Upload
+            $imagePath = null;
+            if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+                $targetDir = 'public/assets/avatars/';
+                if (!is_dir($targetDir)) {
+                    if (is_dir('assets'))
+                        $targetDir = 'assets/avatars/';
+                    else
+                        mkdir($targetDir, 0777, true);
+                }
+
+                $fileName = basename($_FILES['image']['name']);
+                $targetFilePath = $targetDir . $fileName;
+                if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFilePath)) {
+                    $imagePath = $targetFilePath;
+                }
+            }
+
+            // Handle Model Upload
+            $modelPath = null;
+            if (isset($_FILES['model']) && $_FILES['model']['error'] == 0) {
+                $targetDir = 'public/assets/models/';
+                if (!is_dir($targetDir)) {
+                    if (is_dir('assets'))
+                        $targetDir = 'assets/models/';
+                    else
+                        mkdir($targetDir, 0777, true);
+                }
+
+                $fileName = basename($_FILES['model']['name']);
+                $ext = pathinfo($fileName, PATHINFO_EXTENSION);
+                if (strtolower($ext) == 'glb') {
+                    $targetFilePath = $targetDir . $fileName;
+                    if (move_uploaded_file($_FILES['model']['tmp_name'], $targetFilePath)) {
+                        $modelPath = $targetFilePath;
+                    }
+                }
+            }
+
+            $avatarModel = new Avatar();
+            $avatarModel->update($id, $name, $imagePath, $modelPath);
+            header('Location: index.php?page=admin&action=dashboard');
+        }
+    }
+
+    // --- WORLD ACTIONS ---
     public function addWorld()
     {
         require_once 'views/admin/add_world.php';
@@ -82,24 +160,16 @@ class AdminController
             // Handle Image Upload
             $imagePath = '';
             if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-                // Ensure target directory exists
-                if (!is_dir('public/assets/worlds')) {
-                    if (!is_dir('public/assets'))
-                        mkdir('public/assets');
-                    mkdir('public/assets/worlds');
+                $targetDir = 'public/assets/worlds/';
+                if (!is_dir($targetDir)) {
+                    if (is_dir('assets'))
+                        $targetDir = 'assets/worlds/';
+                    else
+                        mkdir($targetDir, 0777, true);
                 }
 
                 $fileName = basename($_FILES['image']['name']);
-                $targetFilePath = 'public/assets/worlds/' . $fileName;
-
-                // If using root structure without public as document root, adjust
-                if (!is_dir('public')) {
-                    // Fallback to assets at root
-                    if (!is_dir('assets/worlds'))
-                        mkdir('assets/worlds', 0777, true);
-                    $targetFilePath = 'assets/worlds/' . $fileName;
-                }
-
+                $targetFilePath = $targetDir . $fileName;
                 if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFilePath)) {
                     $imagePath = $targetFilePath;
                 }
@@ -111,8 +181,42 @@ class AdminController
         }
     }
 
-    public function index()
+    public function editWorld()
     {
-        $this->dashboard();
+        if (isset($_GET['id'])) {
+            $worldModel = new World();
+            $world = $worldModel->getById($_GET['id']);
+            require_once 'views/admin/edit_world.php';
+        }
+    }
+
+    public function updateWorld()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $id = $_POST['id'];
+            $name = $_POST['name'];
+            $url = $_POST['url'];
+
+            $imagePath = null;
+            if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+                $targetDir = 'public/assets/worlds/';
+                if (!is_dir($targetDir)) {
+                    if (is_dir('assets'))
+                        $targetDir = 'assets/worlds/';
+                    else
+                        mkdir($targetDir, 0777, true);
+                }
+
+                $fileName = basename($_FILES['image']['name']);
+                $targetFilePath = $targetDir . $fileName;
+                if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFilePath)) {
+                    $imagePath = $targetFilePath;
+                }
+            }
+
+            $worldModel = new World();
+            $worldModel->update($id, $name, $imagePath, $url);
+            header('Location: index.php?page=admin&action=dashboard');
+        }
     }
 }

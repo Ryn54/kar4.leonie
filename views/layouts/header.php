@@ -48,12 +48,15 @@
             margin: 10px auto;
         }
     </style>
+    </style>
+    <!-- Model Viewer -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div class="container">
-            <a class="navbar-brand" href="index.php">Leonie Logiciel</a>
+            <a class="navbar-brand" href="index.php">Kar4 Léonie</a>
             <?php if (isset($_SESSION['user_id'])): ?>
                 <div class="d-flex align-items-center">
                     <span class="text-light me-3">Bonjour, <?= htmlspecialchars($_SESSION['username'] ?? 'User') ?></span>
