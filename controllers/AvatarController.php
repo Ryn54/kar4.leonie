@@ -4,6 +4,7 @@ class AvatarController extends Controller
 {
     public function create()
     {
+        // Scan for images in public/assets/avatars
         $avatarFiles = glob('assets/avatars/*.{jpg,jpeg,png,gif}', GLOB_BRACE);
         $worldFiles = glob('assets/worlds/*.{jpg,jpeg,png,gif}', GLOB_BRACE);
 
