@@ -1,4 +1,4 @@
-<?php include '../views/layouts/header.php'; ?>
+<?php include '../layouts/header.php'; ?>
 
 <div class="row justify-content-center align-items-center" style="min-height: 60vh;">
     <div class="col-md-6">
@@ -35,4 +35,4 @@
     </div>
 </div>
 
-<?php include '../views/layouts/footer.php'; ?>
+<?php include '../layouts/footer.php'; ?>
