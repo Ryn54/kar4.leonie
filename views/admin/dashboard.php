@@ -1,4 +1,4 @@
-<?php include '../views/layouts/header.php'; ?>
+<?php include 'views/layouts/header.php'; ?>
 
 <div class="container">
     <h2 class="mb-4">Administration - Gestion</h2>
@@ -17,7 +17,7 @@
         <div class="tab-pane fade show active" id="avatars" role="tabpanel">
             <div class="d-flex justify-content-between mb-3">
                 <h4>Liste des Avatars</h4>
-                <button class="btn btn-primary btn-sm">Ajouter un Avatar</button>
+                <a href="index.php?page=admin&action=addAvatar" class="btn btn-primary btn-sm">Ajouter un Avatar</a>
             </div>
             <table class="table table-striped">
                 <thead>
@@ -53,7 +53,7 @@
         <div class="tab-pane fade" id="worlds" role="tabpanel">
             <div class="d-flex justify-content-between mb-3">
                 <h4>Liste des Mondes</h4>
-                <button class="btn btn-primary btn-sm">Ajouter un Monde</button>
+                <a href="index.php?page=admin&action=addWorld" class="btn btn-primary btn-sm">Ajouter un Monde</a>
             </div>
             <table class="table table-striped">
                 <thead>
@@ -87,4 +87,4 @@
     </div>
 </div>
 
-<?php include '../views/layouts/footer.php'; ?>
+<?php include 'views/layouts/footer.php'; ?>

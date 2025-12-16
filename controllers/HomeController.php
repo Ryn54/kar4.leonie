@@ -1,9 +1,10 @@
 <?php
 
-class HomeController extends Controller
+class HomeController
 {
-    public function index()
+    public function index($data = [])
     {
-        $this->view('home/index');
+        extract($data);
+        require_once 'views/home/index.php';
     }
 }

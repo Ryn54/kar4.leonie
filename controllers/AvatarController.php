@@ -1,25 +1,85 @@
 <?php
+require_once 'models/User.php';
+require_once 'models/Avatar.php';
+require_once 'models/World.php';
 
-class AvatarController extends Controller
+class AvatarController
 {
     public function create()
     {
-        // Scan for images in public/assets/avatars
-        $avatarFiles = glob('assets/avatars/*.{jpg,jpeg,png,gif}', GLOB_BRACE);
-        $worldFiles = glob('assets/worlds/*.{jpg,jpeg,png,gif}', GLOB_BRACE);
+        // Create implies making a NEW user
+        // If already logged in, redirect to edit to avoid confusion
+        if (isset($_SESSION['user_id'])) {
+            header('Location: index.php?page=avatar&action=edit');
+            exit();
+        }
 
-        // Prepare data for view
-        // Convert paths for web usage (replace backslashes on Windows)
-        $avatarFiles = $avatarFiles ? array_map(function ($p) {
-            return str_replace('\\', '/', $p); }, $avatarFiles) : [];
-        $worldFiles = $worldFiles ? array_map(function ($p) {
-            return str_replace('\\', '/', $p); }, $worldFiles) : [];
+        $avatarModel = new Avatar();
+        $worldModel = new World();
 
-        $data = [
-            'avatars' => $avatarFiles,
-            'worlds' => $worldFiles
-        ];
+        $avatars = $avatarModel->getAll();
+        $worlds = $worldModel->getAll();
 
-        $this->view('avatar/create', $data);
+        $currentUser = null;
+
+        require_once 'views/avatar/create.php';
+    }
+
+    public function edit()
+    {
+        // Edit implies MODIFYING current user
+        // If NOT logged in, redirect to login
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php');
+            exit();
+        }
+
+        $avatarModel = new Avatar();
+        $worldModel = new World();
+        $userModel = new User();
+
+        $avatars = $avatarModel->getAll();
+        $worlds = $worldModel->getAll();
+        $currentUser = $userModel->getById($_SESSION['user_id']);
+
+        require_once 'views/avatar/create.php';
+    }
+
+    public function store()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $userModel = new User();
+
+            // Check if it's an update or create
+            if (isset($_SESSION['user_id'])) {
+                // Update
+                $password = !empty($_POST['password']) ? $_POST['password'] : null;
+                $avatarId = $_POST['avatar_id'] ?? null;
+                $worldId = $_POST['world_id'] ?? null;
+
+                if ($userModel->update($_SESSION['user_id'], $password, $avatarId, $worldId)) {
+                    header('Location: index.php?page=avatar&action=edit&msg=updated');
+                } else {
+                    echo "Erreur de mise à jour";
+                }
+            } else {
+                // Create
+                $username = $_POST['username'] ?? '';
+                $password = $_POST['password'] ?? '';
+                $avatarId = $_POST['avatar_id'] ?? null;
+                $worldId = $_POST['world_id'] ?? null;
+
+                if ($userModel->create($username, $password, 'user', $avatarId, $worldId)) {
+                    header('Location: index.php?page=home&action=index&msg=created');
+                } else {
+                    header('Location: index.php?page=avatar&action=create&error=failed');
+                }
+            }
+        }
+    }
+
+    public function index()
+    {
+        $this->create();
     }
 }

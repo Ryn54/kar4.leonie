@@ -17,12 +17,13 @@ class Avatar
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function add($name, $image)
+    public function add($name, $image, $model)
     {
-        $sql = "INSERT INTO avatar (nameAvatar, imgAvatar) VALUES (:name, :image)";
+        $sql = "INSERT INTO avatar (nameAvatar, imgAvatar, modelAvatar) VALUES (:name, :image, :model)";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':name', $name);
         $stmt->bindParam(':image', $image);
+        $stmt->bindParam(':model', $model);
         return $stmt->execute();
     }
 }

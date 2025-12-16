@@ -1,14 +1,16 @@
 <?php
+require_once 'models/User.php';
 
-class AuthController extends Controller
+class AuthController
 {
+
     public function login()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $username = $_POST['username'];
             $password = $_POST['password'];
 
-            $userModel = $this->model('User');
+            $userModel = new User();
             $user = $userModel->login($username, $password);
 
             if ($user) {
@@ -17,21 +19,25 @@ class AuthController extends Controller
                 $_SESSION['role'] = $user['userRole'];
 
                 if ($user['userRole'] == 'admin') {
-                    header('Location: /SIO2/Challenge/kar4.leonie/public/admin/dashboard');
+                    header('Location: index.php?page=admin&action=dashboard');
                 } else {
-                    header('Location: /SIO2/Challenge/kar4.leonie/public/avatar/create');
+                    // Normal user goes to their profile edit page
+                    header('Location: index.php?page=avatar&action=edit');
                 }
             } else {
-                $this->view('home/index', ['error' => 'Identifiants incorrects']);
+                // Pass error to view
+                $data = ['error' => 'Identifiants incorrects'];
+                extract($data);
+                require_once 'views/home/index.php';
             }
         } else {
-            $this->view('home/index');
+            require_once 'views/home/index.php';
         }
     }
 
     public function logout()
     {
         session_destroy();
-        header('Location: /SIO2/Challenge/kar4.leonie/public/');
+        header('Location: index.php');
     }
 }
