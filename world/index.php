@@ -98,9 +98,23 @@ $users = $db->getUsers();
             }
         });
 
+        AFRAME.registerComponent('vr-interaction', {
+            //fonctino qui grossi le profil selectionner quand le lazer et pointé dessus
+            init: function () {
+                this.el.classList.add("raycastable");
+                this.el.addEventListener('mouseenter', () => {
+                    this.el.setAttribute('animation__scale', { property: 'scale', to: '1.1 1.1 1.1', dur: 200 });
+                });
+                this.el.addEventListener('mouseleave', () => {
+                    this.el.setAttribute('animation__scale', { property: 'scale', to: '1 1 1', dur: 200 });
+                });
+                this.el.addEventListener('click', () => {
+                    console.log("VR Click detected on:", this.el);
+                });
+            }
+        });
+
         AFRAME.registerComponent("world-manager", {
-            //fonction event qui detecte quand l'utilisateur soumet le formulaire de connexion.
-            //si le mot de passe est correct, on redirige vers le monde.
             init: function () {
                 this.el.addEventListener("submit-login", async () => {
                     const input = document.querySelector("#inputText");
@@ -190,10 +204,10 @@ $users = $db->getUsers();
             <a-camera position="0 1.6 0">
                 <a-cursor color="#FFF" scale="0.5 0.5 0.5"></a-cursor>
             </a-camera>
-            <a-entity laser-controls="hand: right" raycaster="objects: .raycastable; far: 50; interval: 100"
-                line="color: #00d2ff; opacity: 0.75"></a-entity>
-            <a-entity laser-controls="hand: left" raycaster="objects: .raycastable; far: 50; interval: 100"
-                line="color: #00d2ff; opacity: 0.75"></a-entity>
+            <a-entity laser-controls="hand: right" raycaster="objects: .raycastable"
+                cursor="downEvents: triggerdown; upEvents: triggerup; rayOrigin: entity"></a-entity>
+            <a-entity laser-controls="hand: left" raycaster="objects: .raycastable"
+                cursor="downEvents: triggerdown; upEvents: triggerup; rayOrigin: entity"></a-entity>
         </a-entity>
 
         <a-entity id="auth-ui">
@@ -209,7 +223,7 @@ $users = $db->getUsers();
                     $img = !empty($u['imgAvatar']) ? '../kar4.leonie/' . $u['imgAvatar'] : '../kar4.leonie/public/assets/avatars/default.jpg';
                     ?>
                     <a-entity position="<?= $posX ?> 0 0">
-                        <a-circle class="raycastable"
+                        <a-circle vr-interaction
                             user-selector="id: <?= $u['idUser'] ?>; name: <?= htmlspecialchars($u['username']) ?>; world: <?= htmlspecialchars($u['nameWorld']) ?>; url: <?= htmlspecialchars($u['urlWorld'] ?? '') ?>"
                             radius="0.45" src="<?= $img ?>" color="#FFF" shadow></a-circle>
                         <a-text value="<?= htmlspecialchars($u['username']) ?>" align="center" position="0 -0.6 0"
