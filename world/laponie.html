@@ -74,7 +74,7 @@
             }
         });
 
-        // GESTION DU JOUEUR ET DE SON AVATAR (INCARNATION)
+        // GESTION DU JOUEUR ET DE SON AVATAR (INCARNATION PRECISE)
         AFRAME.registerComponent('player-manager', {
             init: function () {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -83,20 +83,28 @@
                     const avatar = document.createElement('a-entity');
                     avatar.setAttribute('id', 'my-body');
                     avatar.setAttribute('gltf-model', '../kar4.leonie/' + modelPath);
-                    // Positionné au centre du rig, légèrement en arrière pour éviter de voir l'intérieur du modèle
-                    avatar.setAttribute('position', '0 0 0.1');
+                    // On scale à 1 pour garder la taille réelle, mais on pourra ajuster si besoin
                     avatar.setAttribute('scale', '1 1 1');
-                    avatar.setAttribute('animation-mixer', '');
+                    avatar.setAttribute('animation-mixer', { clip: 'Idle' });
                     this.el.appendChild(avatar);
                 }
             },
             tick: function () {
-                // Synchronisation de la rotation du corps avec la vue (axe Y uniquement)
                 const cam = document.querySelector('#camera');
                 const body = document.querySelector('#my-body');
                 if (cam && body) {
-                    const rot = cam.getAttribute('rotation');
-                    body.setAttribute('rotation', { x: 0, y: rot.y, z: 0 });
+                    // Récupère la position locale de la caméra dans le Rig
+                    const camPos = cam.object3D.position;
+                    const camRot = cam.getAttribute('rotation');
+
+                    // Aligne le corps sous la tête, mais reculé de 0.2m pour l'ergonomie visuelle
+                    // On utilise le sinus/cosinus pour que le recul suive la rotation du joueur
+                    const angle = camRot.y * (Math.PI / 180);
+                    const offsetX = Math.sin(angle) * 0.2;
+                    const offsetZ = Math.cos(angle) * 0.2;
+
+                    body.object3D.position.set(camPos.x - offsetX, 0, camPos.z - offsetZ);
+                    body.object3D.rotation.y = cam.object3D.rotation.y;
                 }
             }
         });
