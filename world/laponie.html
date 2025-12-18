@@ -100,8 +100,8 @@
                     // Aligne le corps sous la tête, mais reculé de 0.4m pour éviter de voir l'intérieur du modèle
                     // On utilise le sinus/cosinus pour que le recul suive la rotation du joueur
                     const angle = camRot.y * (Math.PI / 180);
-                    const offsetX = Math.sin(angle) * -0.2;
-                    const offsetZ = Math.cos(angle) * -0.2;
+                    const offsetX = Math.sin(angle) * -0.4;
+                    const offsetZ = Math.cos(angle) * -0.4;
 
                     body.object3D.position.set(camPos.x - offsetX, 0, camPos.z - offsetZ);
                     // On ajoute 180 degrés (Math.PI) car le modèle est à l'envers par rapport au regard
