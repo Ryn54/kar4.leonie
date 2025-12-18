@@ -5,7 +5,6 @@
 
 <form id="avatarForm" action="index.php?page=avatar&action=store" method="POST">
     <div class="row mb-5">
-        <!-- Left: Inputs -->
         <div class="col-md-5">
             <div class="card h-100">
                 <div class="card-header bg-primary text-white">Vos Informations</div>
@@ -70,7 +69,6 @@
         </div>
     </div>
 
-    <!-- Bottom: World Selector -->
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -170,19 +168,13 @@
         render();
     }
 
-    // Hashing Script
     document.getElementById('avatarForm').addEventListener('submit', async function (e) {
         e.preventDefault();
         const pwdField = document.getElementById('pwd');
         const rawPwd = pwdField.value;
         const confirmField = document.getElementById('pwd_confirm') || document.getElementById('pwd_confirm_create');
 
-        // If edit mode and password empty, just submit (no change)
-        // confirmField check logic also needs to handle creating mode where pwd IS required
-        // But for creating, browser 'required' handles empty check. JS handles match check.
-
         if (!rawPwd && document.getElementById('pwd_confirm')) {
-            // Edit mode empty pwd -> no change
             this.submit();
             return;
         }
@@ -203,7 +195,6 @@
         this.submit();
     });
 
-    // Model Viewer Animation Logic
     const viewer = document.getElementById('avatar-viewer');
     const animControls = document.getElementById('animation-controls');
     const randomAnimBtn = document.getElementById('random-anim-btn');
