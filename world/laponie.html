@@ -74,18 +74,29 @@
             }
         });
 
-        // GESTION DU JOUEUR ET DE SON AVATAR
+        // GESTION DU JOUEUR ET DE SON AVATAR (INCARNATION)
         AFRAME.registerComponent('player-manager', {
             init: function () {
                 const urlParams = new URLSearchParams(window.location.search);
                 const modelPath = urlParams.get('model');
                 if (modelPath) {
                     const avatar = document.createElement('a-entity');
+                    avatar.setAttribute('id', 'my-body');
                     avatar.setAttribute('gltf-model', '../' + modelPath);
-                    avatar.setAttribute('position', '0 0 -2');
-                    avatar.setAttribute('scale', '2 2 2');
+                    // Positionné au centre du rig, légèrement en arrière pour éviter de voir l'intérieur du modèle
+                    avatar.setAttribute('position', '0 0 0.1');
+                    avatar.setAttribute('scale', '1 1 1');
                     avatar.setAttribute('animation-mixer', '');
                     this.el.appendChild(avatar);
+                }
+            },
+            tick: function () {
+                // Synchronisation de la rotation du corps avec la vue (axe Y uniquement)
+                const cam = document.querySelector('#camera');
+                const body = document.querySelector('#my-body');
+                if (cam && body) {
+                    const rot = cam.getAttribute('rotation');
+                    body.setAttribute('rotation', { x: 0, y: rot.y, z: 0 });
                 }
             }
         });
@@ -164,9 +175,8 @@
 
         <a-entity snow-fall></a-entity>
         <a-entity tree-generator></a-entity>
-        <a-entity player-manager></a-entity>
 
-        <a-entity id="rig">
+        <a-entity id="rig" player-manager>
             <a-camera id="camera" position="0 1.6 0" look-controls wasd-controls></a-camera>
 
             <a-entity id="lhand" hand-controls="hand: left; handModelStyle: lowPoly;"
