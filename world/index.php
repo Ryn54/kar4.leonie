@@ -208,7 +208,7 @@ $users = $db->getUsers();
                     ?>
                     <a-entity position="<?= $posX ?> 0 0"
                         user-selector="id: <?= $u['idUser'] ?>; name: <?= htmlspecialchars($u['username']) ?>; world: <?= htmlspecialchars($u['nameWorld']) ?>; url: <?= htmlspecialchars($u['urlWorld'] ?? '') ?>">
-                        <a-circle radius="0.45" src="<?= $img ?>" color="#FFF" shadow></a-circle>
+                        <a-circle class="raycastable" radius="0.45" src="<?= $img ?>" color="#FFF" shadow></a-circle>
                         <a-text value="<?= htmlspecialchars($u['username']) ?>" align="center" position="0 -0.6 0"
                             width="2.5"></a-text>
                     </a-entity>
@@ -228,57 +228,94 @@ $users = $db->getUsers();
                 <a-xywindow position="-0.85 0 0" scale="0.12 0.12 0.12" width="14" height="6.5"
                     title="Clavier de Connexion" xycontainer="direction: column; spacing: 0.1">
                     <a-xycontainer direction="row" spacing="0.1">
-                        <a-xybutton label="1" width="1.2" height="1.2" keyboard-key="value:1"></a-xybutton>
-                        <a-xybutton label="2" width="1.2" height="1.2" keyboard-key="value:2"></a-xybutton>
-                        <a-xybutton label="3" width="1.2" height="1.2" keyboard-key="value:3"></a-xybutton>
-                        <a-xybutton label="4" width="1.2" height="1.2" keyboard-key="value:4"></a-xybutton>
-                        <a-xybutton label="5" width="1.2" height="1.2" keyboard-key="value:5"></a-xybutton>
-                        <a-xybutton label="6" width="1.2" height="1.2" keyboard-key="value:6"></a-xybutton>
-                        <a-xybutton label="7" width="1.2" height="1.2" keyboard-key="value:7"></a-xybutton>
-                        <a-xybutton label="8" width="1.2" height="1.2" keyboard-key="value:8"></a-xybutton>
-                        <a-xybutton label="9" width="1.2" height="1.2" keyboard-key="value:9"></a-xybutton>
-                        <a-xybutton label="0" width="1.2" height="1.2" keyboard-key="value:0"></a-xybutton>
+                        <a-xybutton class="raycastable" label="1" width="1.2" height="1.2"
+                            keyboard-key="value:1"></a-xybutton>
+                        <a-xybutton class="raycastable" label="2" width="1.2" height="1.2"
+                            keyboard-key="value:2"></a-xybutton>
+                        <a-xybutton class="raycastable" label="3" width="1.2" height="1.2"
+                            keyboard-key="value:3"></a-xybutton>
+                        <a-xybutton class="raycastable" label="4" width="1.2" height="1.2"
+                            keyboard-key="value:4"></a-xybutton>
+                        <a-xybutton class="raycastable" label="5" width="1.2" height="1.2"
+                            keyboard-key="value:5"></a-xybutton>
+                        <a-xybutton class="raycastable" label="6" width="1.2" height="1.2"
+                            keyboard-key="value:6"></a-xybutton>
+                        <a-xybutton class="raycastable" label="7" width="1.2" height="1.2"
+                            keyboard-key="value:7"></a-xybutton>
+                        <a-xybutton class="raycastable" label="8" width="1.2" height="1.2"
+                            keyboard-key="value:8"></a-xybutton>
+                        <a-xybutton class="raycastable" label="9" width="1.2" height="1.2"
+                            keyboard-key="value:9"></a-xybutton>
+                        <a-xybutton class="raycastable" label="0" width="1.2" height="1.2"
+                            keyboard-key="value:0"></a-xybutton>
                     </a-xycontainer>
                     <a-xycontainer direction="row" spacing="0.1">
-                        <a-xybutton label="a" width="1.2" height="1.2" keyboard-key="value:a"></a-xybutton>
-                        <a-xybutton label="z" width="1.2" height="1.2" keyboard-key="value:z"></a-xybutton>
-                        <a-xybutton label="e" width="1.2" height="1.2" keyboard-key="value:e"></a-xybutton>
-                        <a-xybutton label="r" width="1.2" height="1.2" keyboard-key="value:r"></a-xybutton>
-                        <a-xybutton label="t" width="1.2" height="1.2" keyboard-key="value:t"></a-xybutton>
-                        <a-xybutton label="y" width="1.2" height="1.2" keyboard-key="value:y"></a-xybutton>
-                        <a-xybutton label="u" width="1.2" height="1.2" keyboard-key="value:u"></a-xybutton>
-                        <a-xybutton label="i" width="1.2" height="1.2" keyboard-key="value:i"></a-xybutton>
-                        <a-xybutton label="o" width="1.2" height="1.2" keyboard-key="value:o"></a-xybutton>
-                        <a-xybutton label="p" width="1.2" height="1.2" keyboard-key="value:p"></a-xybutton>
+                        <a-xybutton class="raycastable" label="a" width="1.2" height="1.2"
+                            keyboard-key="value:a"></a-xybutton>
+                        <a-xybutton class="raycastable" label="z" width="1.2" height="1.2"
+                            keyboard-key="value:z"></a-xybutton>
+                        <a-xybutton class="raycastable" label="e" width="1.2" height="1.2"
+                            keyboard-key="value:e"></a-xybutton>
+                        <a-xybutton class="raycastable" label="r" width="1.2" height="1.2"
+                            keyboard-key="value:r"></a-xybutton>
+                        <a-xybutton class="raycastable" label="t" width="1.2" height="1.2"
+                            keyboard-key="value:t"></a-xybutton>
+                        <a-xybutton class="raycastable" label="y" width="1.2" height="1.2"
+                            keyboard-key="value:y"></a-xybutton>
+                        <a-xybutton class="raycastable" label="u" width="1.2" height="1.2"
+                            keyboard-key="value:u"></a-xybutton>
+                        <a-xybutton class="raycastable" label="i" width="1.2" height="1.2"
+                            keyboard-key="value:i"></a-xybutton>
+                        <a-xybutton class="raycastable" label="o" width="1.2" height="1.2"
+                            keyboard-key="value:o"></a-xybutton>
+                        <a-xybutton class="raycastable" label="p" width="1.2" height="1.2"
+                            keyboard-key="value:p"></a-xybutton>
                     </a-xycontainer>
                     <a-xycontainer direction="row" spacing="0.1">
-                        <a-xybutton label="q" width="1.2" height="1.2" keyboard-key="value:q"></a-xybutton>
-                        <a-xybutton label="s" width="1.2" height="1.2" keyboard-key="value:s"></a-xybutton>
-                        <a-xybutton label="d" width="1.2" height="1.2" keyboard-key="value:d"></a-xybutton>
-                        <a-xybutton label="f" width="1.2" height="1.2" keyboard-key="value:f"></a-xybutton>
-                        <a-xybutton label="g" width="1.2" height="1.2" keyboard-key="value:g"></a-xybutton>
-                        <a-xybutton label="h" width="1.2" height="1.2" keyboard-key="value:h"></a-xybutton>
-                        <a-xybutton label="j" width="1.2" height="1.2" keyboard-key="value:j"></a-xybutton>
-                        <a-xybutton label="k" width="1.2" height="1.2" keyboard-key="value:k"></a-xybutton>
-                        <a-xybutton label="l" width="1.2" height="1.2" keyboard-key="value:l"></a-xybutton>
-                        <a-xybutton label="m" width="1.2" height="1.2" keyboard-key="value:m"></a-xybutton>
+                        <a-xybutton class="raycastable" label="q" width="1.2" height="1.2"
+                            keyboard-key="value:q"></a-xybutton>
+                        <a-xybutton class="raycastable" label="s" width="1.2" height="1.2"
+                            keyboard-key="value:s"></a-xybutton>
+                        <a-xybutton class="raycastable" label="d" width="1.2" height="1.2"
+                            keyboard-key="value:d"></a-xybutton>
+                        <a-xybutton class="raycastable" label="f" width="1.2" height="1.2"
+                            keyboard-key="value:f"></a-xybutton>
+                        <a-xybutton class="raycastable" label="g" width="1.2" height="1.2"
+                            keyboard-key="value:g"></a-xybutton>
+                        <a-xybutton class="raycastable" label="h" width="1.2" height="1.2"
+                            keyboard-key="value:h"></a-xybutton>
+                        <a-xybutton class="raycastable" label="j" width="1.2" height="1.2"
+                            keyboard-key="value:j"></a-xybutton>
+                        <a-xybutton class="raycastable" label="k" width="1.2" height="1.2"
+                            keyboard-key="value:k"></a-xybutton>
+                        <a-xybutton class="raycastable" label="l" width="1.2" height="1.2"
+                            keyboard-key="value:l"></a-xybutton>
+                        <a-xybutton class="raycastable" label="m" width="1.2" height="1.2"
+                            keyboard-key="value:m"></a-xybutton>
                     </a-xycontainer>
                     <a-xycontainer direction="row" spacing="0.1">
-                        <a-xybutton label="w" width="1.2" height="1.2" keyboard-key="value:w"></a-xybutton>
-                        <a-xybutton label="x" width="1.2" height="1.2" keyboard-key="value:x"></a-xybutton>
-                        <a-xybutton label="c" width="1.2" height="1.2" keyboard-key="value:c"></a-xybutton>
-                        <a-xybutton label="v" width="1.2" height="1.2" keyboard-key="value:v"></a-xybutton>
-                        <a-xybutton label="b" width="1.2" height="1.2" keyboard-key="value:b"></a-xybutton>
-                        <a-xybutton label="n" width="1.2" height="1.2" keyboard-key="value:n"></a-xybutton>
-                        <a-xybutton label="Maj." width="2.5" height="1.2" keyboard-key="value:shift"
+                        <a-xybutton class="raycastable" label="w" width="1.2" height="1.2"
+                            keyboard-key="value:w"></a-xybutton>
+                        <a-xybutton class="raycastable" label="x" width="1.2" height="1.2"
+                            keyboard-key="value:x"></a-xybutton>
+                        <a-xybutton class="raycastable" label="c" width="1.2" height="1.2"
+                            keyboard-key="value:c"></a-xybutton>
+                        <a-xybutton class="raycastable" label="v" width="1.2" height="1.2"
+                            keyboard-key="value:v"></a-xybutton>
+                        <a-xybutton class="raycastable" label="b" width="1.2" height="1.2"
+                            keyboard-key="value:b"></a-xybutton>
+                        <a-xybutton class="raycastable" label="n" width="1.2" height="1.2"
+                            keyboard-key="value:n"></a-xybutton>
+                        <a-xybutton class="raycastable" label="Maj." width="2.5" height="1.2" keyboard-key="value:shift"
                             color="#555"></a-xybutton>
-                        <a-xybutton label="<-" width="1.2" height="1.2" keyboard-key="value:backspace"
-                            color="#f00"></a-xybutton>
+                        <a-xybutton class="raycastable" label="<-" width="1.2" height="1.2"
+                            keyboard-key="value:backspace" color="#f00"></a-xybutton>
                     </a-xycontainer>
                     <a-xycontainer direction="row" spacing="0.1">
-                        <a-xybutton label="Espace" width="6" height="1.2" keyboard-key="value:space"></a-xybutton>
-                        <a-xybutton label="VALIDER" width="5" height="1.2" keyboard-key="value:submit"
-                            color="#0f0"></a-xybutton>
+                        <a-xybutton class="raycastable" label="Espace" width="6" height="1.2"
+                            keyboard-key="value:space"></a-xybutton>
+                        <a-xybutton class="raycastable" label="VALIDER" width="5" height="1.2"
+                            keyboard-key="value:submit" color="#0f0"></a-xybutton>
                     </a-xycontainer>
                 </a-xywindow>
             </a-entity>
