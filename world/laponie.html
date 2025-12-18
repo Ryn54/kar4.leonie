@@ -104,7 +104,8 @@
                     const offsetZ = Math.cos(angle) * 0.2;
 
                     body.object3D.position.set(camPos.x - offsetX, 0, camPos.z - offsetZ);
-                    body.object3D.rotation.y = cam.object3D.rotation.y;
+                    // On ajoute 180 degrés (Math.PI) car le modèle est à l'envers par rapport au regard
+                    body.object3D.rotation.y = cam.object3D.rotation.y + Math.PI;
                 }
             }
         });
