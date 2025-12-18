@@ -204,7 +204,7 @@ $users = $db->getUsers();
                 $count = count($users);
                 foreach ($users as $i => $u):
                     $posX = ($i - ($count - 1) / 2) * 1.1;
-                    $img = !empty($u['imgAvatar']) ? '../' . $u['imgAvatar'] : '../public/assets/avatars/default.jpg';
+                    $img = !empty($u['imgAvatar']) ? '../kar4.leonie/' . $u['imgAvatar'] : '../kar4.leonie/public/assets/avatars/default.jpg';
                     ?>
                     <a-entity position="<?= $posX ?> 0 0"
                         user-selector="id: <?= $u['idUser'] ?>; name: <?= htmlspecialchars($u['username']) ?>; world: <?= htmlspecialchars($u['nameWorld']) ?>; url: <?= htmlspecialchars($u['urlWorld'] ?? '') ?>">
