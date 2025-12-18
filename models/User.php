@@ -36,9 +36,13 @@ class User
 
     public function create($username, $password, $role = 'user', $avatarId = null, $worldId = null)
     {
+        $avatarId = !empty($avatarId) ? intval($avatarId) : null;
+        $worldId = !empty($worldId) ? intval($worldId) : null;
+
         $sql = "INSERT INTO user (username, password, userRole, idAvatar, idWorld) VALUES (:username, :password, :role, :avatarId, :worldId)";
         $stmt = $this->db->prepare($sql);
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
         $stmt->bindParam(':username', $username);
         $stmt->bindParam(':password', $hashed_password);
         $stmt->bindParam(':role', $role);
@@ -66,11 +70,11 @@ class User
             $updates[] = "password = :password";
             $params[':password'] = password_hash($password, PASSWORD_DEFAULT);
         }
-        if ($avatarId) {
+        if ($avatarId !== null) {
             $updates[] = "idAvatar = :avatarId";
             $params[':avatarId'] = $avatarId;
         }
-        if ($worldId) {
+        if ($worldId !== null) {
             $updates[] = "idWorld = :worldId";
             $params[':worldId'] = $worldId;
         }

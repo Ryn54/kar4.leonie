@@ -51,7 +51,7 @@
 
                                 <div id="animation-controls" class="mt-2" style="display:none;">
                                     <button type="button" class="btn btn-sm btn-outline-primary" id="random-anim-btn">
-                                        Animation Aléatoire 🎲
+                                        Animation Aléatoire
                                     </button>
                                 </div>
 

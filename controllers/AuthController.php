@@ -21,11 +21,9 @@ class AuthController
                 if ($user['userRole'] == 'admin') {
                     header('Location: index.php?page=admin&action=dashboard');
                 } else {
-                    // Normal user goes to their profile edit page
                     header('Location: index.php?page=avatar&action=edit');
                 }
             } else {
-                // Pass error to view
                 $data = ['error' => 'Identifiants incorrects'];
                 extract($data);
                 require_once 'views/home/index.php';

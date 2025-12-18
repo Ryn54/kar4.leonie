@@ -35,4 +35,22 @@
     </div>
 </div>
 
+<script>
+    // SHA-256 Client-side hashing for password consistency
+    document.querySelector('form').addEventListener('submit', async function (e) {
+        const pwdField = document.getElementById('password');
+        const rawPwd = pwdField.value;
+
+        if (rawPwd) {
+            e.preventDefault(); // Stop only to hash
+            const msgBuffer = new TextEncoder().encode(rawPwd);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            pwdField.value = hashHex;
+            this.submit(); // Resume submit
+        }
+    });
+</script>
+
 <?php include 'views/layouts/footer.php'; ?>

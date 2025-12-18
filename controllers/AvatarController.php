@@ -54,8 +54,8 @@ class AvatarController
             if (isset($_SESSION['user_id'])) {
                 // Update
                 $password = !empty($_POST['password']) ? $_POST['password'] : null;
-                $avatarId = $_POST['avatar_id'] ?? null;
-                $worldId = $_POST['world_id'] ?? null;
+                $avatarId = !empty($_POST['avatar_id']) ? intval($_POST['avatar_id']) : null;
+                $worldId = !empty($_POST['world_id']) ? intval($_POST['world_id']) : null;
 
                 if ($userModel->update($_SESSION['user_id'], $password, $avatarId, $worldId)) {
                     header('Location: index.php?page=avatar&action=edit&msg=updated');
@@ -66,8 +66,8 @@ class AvatarController
                 // Create
                 $username = $_POST['username'] ?? '';
                 $password = $_POST['password'] ?? '';
-                $avatarId = $_POST['avatar_id'] ?? null;
-                $worldId = $_POST['world_id'] ?? null;
+                $avatarId = !empty($_POST['avatar_id']) ? intval($_POST['avatar_id']) : null;
+                $worldId = !empty($_POST['world_id']) ? intval($_POST['world_id']) : null;
 
                 if ($userModel->create($username, $password, 'user', $avatarId, $worldId)) {
                     header('Location: index.php?page=home&action=index&msg=created');
