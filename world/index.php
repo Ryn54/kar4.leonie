@@ -190,8 +190,10 @@ $users = $db->getUsers();
             <a-camera position="0 1.6 0">
                 <a-cursor color="#FFF" scale="0.5 0.5 0.5"></a-cursor>
             </a-camera>
-            <a-entity laser-controls="hand: right" raycaster="objects: .raycastable"></a-entity>
-            <a-entity laser-controls="hand: left" raycaster="objects: .raycastable"></a-entity>
+            <a-entity laser-controls="hand: right" raycaster="objects: .raycastable; far: 50; interval: 100"
+                line="color: #00d2ff; opacity: 0.75"></a-entity>
+            <a-entity laser-controls="hand: left" raycaster="objects: .raycastable; far: 50; interval: 100"
+                line="color: #00d2ff; opacity: 0.75"></a-entity>
         </a-entity>
 
         <a-entity id="auth-ui">
@@ -206,9 +208,10 @@ $users = $db->getUsers();
                     $posX = ($i - ($count - 1) / 2) * 1.1;
                     $img = !empty($u['imgAvatar']) ? '../kar4.leonie/' . $u['imgAvatar'] : '../kar4.leonie/public/assets/avatars/default.jpg';
                     ?>
-                    <a-entity position="<?= $posX ?> 0 0"
-                        user-selector="id: <?= $u['idUser'] ?>; name: <?= htmlspecialchars($u['username']) ?>; world: <?= htmlspecialchars($u['nameWorld']) ?>; url: <?= htmlspecialchars($u['urlWorld'] ?? '') ?>">
-                        <a-circle class="raycastable" radius="0.45" src="<?= $img ?>" color="#FFF" shadow></a-circle>
+                    <a-entity position="<?= $posX ?> 0 0">
+                        <a-circle class="raycastable"
+                            user-selector="id: <?= $u['idUser'] ?>; name: <?= htmlspecialchars($u['username']) ?>; world: <?= htmlspecialchars($u['nameWorld']) ?>; url: <?= htmlspecialchars($u['urlWorld'] ?? '') ?>"
+                            radius="0.45" src="<?= $img ?>" color="#FFF" shadow></a-circle>
                         <a-text value="<?= htmlspecialchars($u['username']) ?>" align="center" position="0 -0.6 0"
                             width="2.5"></a-text>
                     </a-entity>
