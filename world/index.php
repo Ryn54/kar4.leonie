@@ -99,7 +99,7 @@ $users = $db->getUsers();
         });
 
         AFRAME.registerComponent('vr-interaction', {
-            //fonctino qui grossi le profil selectionner quand le lazer et pointé dessus
+            //fonction qui grossi le profil selectionner quand le lazer et pointé dessus
             init: function () {
                 this.el.classList.add("raycastable");
                 this.el.addEventListener('mouseenter', () => {
