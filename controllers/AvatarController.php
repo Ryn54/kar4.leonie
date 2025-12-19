@@ -7,8 +7,6 @@ class AvatarController
 {
     public function create()
     {
-        // Create implies making a NEW user
-        // If already logged in, redirect to edit to avoid confusion
         if (isset($_SESSION['user_id'])) {
             header('Location: index.php?page=avatar&action=edit');
             exit();
