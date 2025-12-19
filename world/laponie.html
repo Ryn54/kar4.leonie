@@ -3,7 +3,46 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Laponie VR - Scène Complète Détaillée</title>
+    <title>Laponie VR - Version Stable & Loading</title>
+
+    <style>
+        #loader-screen {
+            position: fixed;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0a1a2f;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: sans-serif;
+            transition: opacity 1s;
+        }
+
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 2s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
@@ -12,6 +51,20 @@
     <script src="https://n5ro.github.io/aframe-physics-system/dist/aframe-physics-system.min.js"></script>
 
     <script>
+        // --- SCRIPT POUR GERER LA FIN DU CHARGEMENT ---
+        AFRAME.registerComponent('loading-manager', {
+            init: function () {
+                this.el.addEventListener('loaded', () => {
+                    const loader = document.getElementById('loader-screen');
+                    // On attend un tout petit peu pour être sûr que les textures s'affichent
+                    setTimeout(() => {
+                        loader.style.opacity = '0';
+                        setTimeout(() => { loader.style.display = 'none'; }, 1000);
+                    }, 2000);
+                });
+            }
+        });
+
         // SHADER AURORE
         AFRAME.registerComponent('aurora-shader', {
             init: function () {
@@ -47,7 +100,7 @@
             }
         });
 
-        // GENERATEUR D'ARBRES
+        // GENERATEUR ARBRES
         AFRAME.registerComponent('tree-generator', {
             schema: { count: { default: 200 }, spread: { default: 150 } },
             init: function () {
@@ -57,24 +110,34 @@
                     if (Math.abs(x) < 8 && Math.abs(z) < 8) x += 15;
                     let tree = document.createElement('a-entity');
                     tree.setAttribute('position', { x: x, y: 0, z: z });
+
                     let trunk = document.createElement('a-cylinder');
-                    trunk.setAttribute('color', '#3d2b1f'); trunk.setAttribute('radius', '0.5'); trunk.setAttribute('height', '2'); trunk.setAttribute('position', '0 0.5 0');
+                    trunk.setAttribute('material', 'src: #bark-tex; repeat: 1 2; roughness: 1; color: #5c2e0c');
+                    trunk.setAttribute('radius', '0.5'); trunk.setAttribute('height', '2'); trunk.setAttribute('position', '0 0.5 0');
+                    trunk.setAttribute('static-body', 'shape: cylinder'); // Collision sur le tronc
                     tree.appendChild(trunk);
+
                     let leaves = document.createElement('a-cone');
-                    leaves.setAttribute('color', '#1a472a'); leaves.setAttribute('radius-bottom', '1.7'); leaves.setAttribute('height', '3'); leaves.setAttribute('position', '0 2.5 0');
+                    leaves.setAttribute('material', 'src: #pine-tex; repeat: 4 2; roughness: 1; color: #1a472a');
+                    leaves.setAttribute('radius-bottom', '1.7'); leaves.setAttribute('height', '3'); leaves.setAttribute('position', '0 2.5 0');
                     tree.appendChild(leaves);
+
                     let leaves2 = document.createElement('a-cone');
-                    leaves2.setAttribute('color', '#1a472a'); leaves2.setAttribute('radius-bottom', '1.4'); leaves2.setAttribute('height', '2'); leaves2.setAttribute('position', '0 3 0');
+                    leaves2.setAttribute('material', 'src: #pine-tex; repeat: 3 1; roughness: 1; color: #1a472a');
+                    leaves2.setAttribute('radius-bottom', '1.4'); leaves2.setAttribute('height', '2'); leaves2.setAttribute('position', '0 3 0');
                     tree.appendChild(leaves2);
+
                     let leaves3 = document.createElement('a-cone');
-                    leaves3.setAttribute('color', '#1a472a'); leaves3.setAttribute('radius-bottom', '1.2'); leaves3.setAttribute('height', '1.5'); leaves3.setAttribute('position', '0 3.5 0');
+                    leaves3.setAttribute('material', 'src: #pine-tex; repeat: 2 1; roughness: 1; color: #1a472a');
+                    leaves3.setAttribute('radius-bottom', '1.2'); leaves3.setAttribute('height', '1.5'); leaves3.setAttribute('position', '0 3.5 0');
                     tree.appendChild(leaves3);
+
                     this.el.appendChild(tree);
                 }
             }
         });
 
-        // GESTION DU JOUEUR ET DE SON AVATAR (INCARNATION PRECISE)
+        // JOUEUR
         AFRAME.registerComponent('player-manager', {
             init: function () {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -83,7 +146,6 @@
                     const avatar = document.createElement('a-entity');
                     avatar.setAttribute('id', 'my-body');
                     avatar.setAttribute('gltf-model', '../kar4.leonie/' + modelPath);
-                    // On scale à 1 pour garder la taille réelle, mais on pourra ajuster si besoin
                     avatar.setAttribute('scale', '1 1 1');
                     avatar.setAttribute('animation-mixer', { clip: 'Idle' });
                     this.el.appendChild(avatar);
@@ -93,18 +155,12 @@
                 const cam = document.querySelector('#camera');
                 const body = document.querySelector('#my-body');
                 if (cam && body) {
-                    // Récupère la position locale de la caméra dans le Rig
                     const camPos = cam.object3D.position;
                     const camRot = cam.getAttribute('rotation');
-
-                    // Aligne le corps sous la tête, mais reculé de 0.4m pour éviter de voir l'intérieur du modèle
-                    // On utilise le sinus/cosinus pour que le recul suive la rotation du joueur
                     const angle = camRot.y * (Math.PI / 180);
                     const offsetX = Math.sin(angle) * -0.4;
                     const offsetZ = Math.cos(angle) * -0.4;
-
                     body.object3D.position.set(camPos.x - offsetX, 0, camPos.z - offsetZ);
-                    // On ajoute 180 degrés (Math.PI) car le modèle est à l'envers par rapport au regard
                     body.object3D.rotation.y = cam.object3D.rotation.y + Math.PI;
                 }
             }
@@ -113,52 +169,62 @@
 </head>
 
 <body>
-    <a-scene background="color: #0a1a2f" fog="type: exponential; color: #0a1a2f; density: 0.015"
-        physics="gravity: -9.8; restitution: 0.7;">
+    <div id="loader-screen">
+        <div class="spinner"></div>
+        <h1>Chargement de la Laponie...</h1>
+        <p>Veuillez patienter pendant la generation de la neige.</p>
+    </div>
 
+    <a-scene loading-manager background="color: #0a1a2f" fog="type: exponential; color: #0a1a2f; density: 0.015"
+        physics="gravity: -9.8; restitution: 0.3; debug: false;">
+
+        <a-assets>
+            <img id="snow-tex" src="assets/snow.png">
+            <img id="bark-tex" src="assets/bark.png">
+            <img id="pine-tex" src="assets/pine.png">
+            <a-asset-item id="house-model" src="uploads_files_5622189_HouseCake.glb"></a-asset-item>
+            <audio id="noel-music" src="assets/noel_music.mp3"></audio>
+        </a-assets>
+
+        <a-sound src="#noel-music" autoplay="true" loop="true" positional="false" volume="0.5"></a-sound>
         <a-light type="ambient" color="#b9d4ff" intensity="0.5"></a-light>
         <a-light type="directional" position="-1 1 1" intensity="0.5"></a-light>
-        <!-- Aurore boreale -->
+
         <a-entity position="0 60 -50" rotation="10 0 -10">
             <a-cylinder radius="150" height="80" theta-start="90" theta-length="180" open-ended="true"
                 aurora-shader></a-cylinder>
         </a-entity>
 
-        <!-- sol -->
-        <a-plane id="ground" class="solide" rotation="-90 0 0" width="300" height="300" color="#ffffff"
-            material="side: double" static-body></a-plane>
-        <!-- Cabane -->
-        <a-entity gltf-model="uploads_files_5622189_HouseCake.glb" position="7 -0.001 -7" scale="0.015 0.015 0.015"
-            class="solide"></a-entity>
-        <!-- bonhomme de neige -->
-        <a-entity position="2 0 -3">
-            <a-sphere position="0 0.4 0" radius="0.4" color="white"></a-sphere>
-            <a-sphere position="0 1.0 0" radius="0.3" color="white"></a-sphere>
-            <a-sphere position="0 1.4 0" radius="0.2" color="white"></a-sphere>
+        <a-box id="ground" class="solide" position="0 -0.5 0" width="300" height="1" depth="300"
+            material="src: #snow-tex; repeat: 100 100; roughness: 1; metalness: 0; color: #eeeeee"
+            static-body="shape: box"></a-box>
 
+        <a-entity gltf-model="#house-model" position="7 -0.001 -7" scale="0.015 0.015 0.015" class="solide"
+            static-body="shape: hull"></a-entity>
+
+        <a-entity position="2 0 -3">
+            <a-sphere position="0 0.4 0" radius="0.4" material="src: #snow-tex; repeat: 2 1" color="white"></a-sphere>
+            <a-sphere position="0 1.0 0" radius="0.3" material="src: #snow-tex; repeat: 2 1" color="white"></a-sphere>
+            <a-sphere position="0 1.4 0" radius="0.2" material="src: #snow-tex; repeat: 2 1" color="white"></a-sphere>
             <a-cone position="0 1.4 0.25" radius-bottom="0.03" height="0.15" rotation="90 0 0" color="orange"></a-cone>
             <a-sphere color="black" radius="0.02" position="-0.07 1.45 0.18"></a-sphere>
             <a-sphere color="black" radius="0.02" position="0.07 1.45 0.18"></a-sphere>
-
-            <a-sphere color="black" radius="0.03" position="0 1.15 0.27"></a-sphere>
-            <a-sphere color="black" radius="0.03" position="0 1.0 0.29"></a-sphere>
-            <a-sphere color="black" radius="0.03" position="0 0.85 0.27"></a-sphere>
         </a-entity>
-        <!-- grab test (non fonctionnel) -->
+
         <a-entity position="0 0 -1">
             <a-box position="0 0 0" width="5" height="0.2" depth="1" color="#5c2e0c" static-body="shape: box"></a-box>
 
             <a-sphere class="grabbable" hoverable grabbable stretchable draggable droppable
-                dynamic-body="shape: sphere; sphereRadius: 0.1; mass: 0.1" position="-0.2 1 0" radius="0.1"
-                color="white">
+                dynamic-body="shape: sphere; sphereRadius: 0.1; mass: 4;" position="-0.2 0.5 0" radius="0.1"
+                material="src: #snow-tex; repeat: 2 1; roughness: 0.8; color: white">
             </a-sphere>
 
             <a-sphere class="grabbable" hoverable grabbable stretchable draggable droppable
-                dynamic-body="shape: sphere; sphereRadius: 0.1; mass: 0.1" position="0.2 1 0" radius="0.1"
-                color="white">
+                dynamic-body="shape: sphere; sphereRadius: 0.1; mass: 4;" position="0.2 0.5 0" radius="0.1"
+                material="src: #snow-tex; repeat: 2 1; roughness: 0.8; color: white">
             </a-sphere>
         </a-entity>
-        <!-- papa pingouin  -->
+
         <a-entity position="5 0 10" scale="1.5 1.5 1.5"
             animation="property: position; to: 20 0 10; dir: alternate; dur: 4000; loop: true">
             <a-sphere color="black" radius="0.3" position="0 0.3 0"></a-sphere>
@@ -166,14 +232,12 @@
             <a-sphere color="black" radius="0.2" position="0 0.7 0"></a-sphere>
             <a-cone color="orange" radius-bottom="0.04" height="0.15" rotation="90 0 0" position="0 0.7 0.2"></a-cone>
         </a-entity>
-        <!-- maman pingouin -->
         <a-entity position="0 0 5" animation="property: position; to: 10 0 5; dir: alternate; dur: 4000; loop: true">
             <a-sphere color="pink" radius="0.3" position="0 0.3 0"></a-sphere>
             <a-sphere color="white" radius="0.25" position="0.05 0.3 0.1"></a-sphere>
             <a-sphere color="pink" radius="0.2" position="0 0.7 0"></a-sphere>
             <a-cone color="orange" radius-bottom="0.04" height="0.15" rotation="90 0 0" position="0 0.7 0.2"></a-cone>
         </a-entity>
-        <!-- grand pere pingouin -->
         <a-entity position="-5 0 2" scale="1.3 1.3 1.3"
             animation="property: position; to: 20 0 2; dir: alternate; dur: 4000; loop: true">
             <a-sphere color="gray" radius="0.3" position="0 0.3 0"></a-sphere>
@@ -189,12 +253,17 @@
             <a-camera id="camera" position="0 1.6 0" look-controls wasd-controls></a-camera>
 
             <a-entity id="lhand" hand-controls="hand: left; handModelStyle: lowPoly;"
-                sphere-collider="objects: .grabbable; radius: 0.12"
-                super-hands="colliderEvent: collisions; colliderEndEvent: collisions; colliderEventProperty: els; colliderEndEventProperty: clearedEls; grabStartButtons: gripdown, pinchstarted; grabEndButtons: gripup, pinchended;"
                 teleport-controls="cameraRig: #rig; teleportOrigin: #camera; collisionEntities: .solide; button: trigger; type: parabolic; landingMaxAngle: 360; curveHitColor: #00ff00">
             </a-entity>
+
             <a-entity id="rhand" hand-controls="hand: right; handModelStyle: lowPoly;"
-                sphere-collider="objects: .grabbable" super-hands>
+                sphere-collider="objects: .grabbable; radius: 0.05" static-body="shape: sphere; sphereRadius: 0.05"
+                super-hands="colliderEvent: hit; 
+                             colliderEndEvent: hitend; 
+                             grabStartButtons: abuttondown; 
+                             grabEndButtons: abuttonup; 
+                             stretchStartButtons: abuttondown; 
+                             stretchEndButtons: abuttonup;">
             </a-entity>
         </a-entity>
 
