@@ -174,6 +174,7 @@ $users = $db->getUsers();
         <a-light type="directional" position="-1 4 1" intensity="0.4"></a-light>
 
         <a-entity id="rig" position="0 0 0">
+            <!-- curseur de l'utilisateur -->
             <a-camera position="0 1.6 0">
                 <a-cursor color="#FFF" scale="0.5 0.5 0.5"></a-cursor>
             </a-camera>
