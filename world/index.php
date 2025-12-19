@@ -115,6 +115,9 @@ $users = $db->getUsers();
         });
 
         AFRAME.registerComponent("world-manager", {
+            //fonction qui gere le login bouton valider
+            //elle recupere le mot de passe et l'envoie au serveur
+            //si le mot de passe est correct, elle redirige vers le monde
             init: function () {
                 this.el.addEventListener("submit-login", async () => {
                     const input = document.querySelector("#inputText");
@@ -161,36 +164,6 @@ $users = $db->getUsers();
             }
         });
 
-        AFRAME.registerComponent('aurora-shader', {
-            init: function () {
-                this.material = new THREE.ShaderMaterial({
-                    uniforms: { time: { value: 1.0 } },
-                    vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
-                    fragmentShader: `uniform float time; varying vec2 vUv; void main() { float wave = sin(vUv.x * 10.0 + time * 0.5) * 0.5 + 0.5; wave += sin(vUv.x * 20.0 - time * 0.8) * 0.2; vec3 color = mix(vec3(0.0, 1.0, 0.5), vec3(0.2, 0.4, 1.0), wave); float alpha = smoothstep(0.0, 0.2, vUv.y) * (1.0 - smoothstep(0.8, 1.0, vUv.y)) * wave * 0.6; gl_FragColor = vec4(color, alpha); }`,
-                    transparent: true, side: THREE.DoubleSide, depthWrite: false
-                });
-                this.el.getObject3D('mesh').material = this.material;
-            },
-            tick: function (time) { this.material.uniforms.time.value = time / 1000; }
-        });
-
-        AFRAME.registerComponent('snow-fall', {
-            init: function () {
-                for (let i = 0; i < 500; i++) {
-                    let f = document.createElement('a-sphere');
-                    f.setAttribute('radius', '0.02'); f.setAttribute('color', '#FFF'); f.setAttribute('shader', 'flat');
-                    f.setAttribute('position', { x: (Math.random() - 0.5) * 80, y: Math.random() * 20, z: (Math.random() - 0.5) * 80 });
-                    this.el.appendChild(f);
-                }
-            },
-            tick: function () {
-                let children = this.el.children;
-                for (let i = 0; i < children.length; i++) {
-                    let p = children[i].object3D.position;
-                    p.y -= 0.05; if (p.y < 0) p.y = 20;
-                }
-            }
-        });
     </script>
 </head>
 
