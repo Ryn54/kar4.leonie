@@ -24,6 +24,7 @@ $users = $db->getUsers();
 
         window.isShifted = false;
 
+        //on donne au composant keyboard-key un script
         AFRAME.registerComponent("keyboard-key", {
             schema: { value: { type: "string", default: "" } },
             //fonction init qui ajoute un event listener sur le click
