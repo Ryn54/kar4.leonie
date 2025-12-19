@@ -197,6 +197,7 @@ $users = $db->getUsers();
                     $img = !empty($u['imgAvatar']) ? '../kar4.leonie/' . $u['imgAvatar'] : '../kar4.leonie/public/assets/avatars/default.jpg';
                     ?>
                     <a-entity position="<?= $posX ?> 0 0">
+                        <!-- selectionneur de l'utilisateur -->
                         <a-circle vr-interaction
                             user-selector="id: <?= $u['idUser'] ?>; name: <?= htmlspecialchars($u['username']) ?>; world: <?= htmlspecialchars($u['nameWorld']) ?>; url: <?= htmlspecialchars($u['urlWorld'] ?? '') ?>"
                             radius="0.45" src="<?= $img ?>" color="#FFF" shadow></a-circle>
