@@ -30,8 +30,11 @@ $users = $db->getUsers();
             //si le bouton est shift, on change la variable isShifted
             //si le bouton est submit, on envoie le formulaire
             //sinon on ajoute le caractere du bouton dans le champ de texte
+            //init signifie que sa s'active quand on charge la scene
             init: function () {
+                //on ajoute la classe raycastable pour que le bouton soit cliquable
                 this.el.classList.add("raycastable");
+                //on ajoute un event listener sur le click
                 this.el.addEventListener("click", () => {
                     const input = document.querySelector("#inputText");
                     const label = document.querySelector("#typedLabel");
@@ -197,7 +200,7 @@ $users = $db->getUsers();
                     $img = !empty($u['imgAvatar']) ? '../kar4.leonie/' . $u['imgAvatar'] : '../kar4.leonie/public/assets/avatars/default.jpg';
                     ?>
                     <a-entity position="<?= $posX ?> 0 0">
-                        <!-- selectionneur de l'utilisateur -->
+                        <!-- selectionneur de l'utilisateur on donne des parametres  pour pas que l'utilisateur puisse interagir avec tout-->
                         <a-circle vr-interaction
                             user-selector="id: <?= $u['idUser'] ?>; name: <?= htmlspecialchars($u['username']) ?>; world: <?= htmlspecialchars($u['nameWorld']) ?>; url: <?= htmlspecialchars($u['urlWorld'] ?? '') ?>"
                             radius="0.45" src="<?= $img ?>" color="#FFF" shadow></a-circle>
